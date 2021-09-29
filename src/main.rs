@@ -108,57 +108,26 @@ impl Team {
         (home_score, away_score)
     }
 
+    fn sim_match_ved(home: &Team, away: &Team) -> (i32, i32){
+        let total_home = home.home_wins+home.home_draws+home.home_losses;
+        let total_away = away.away_wins+away.away_draws+away.away_losses;
+        let mut key :i32 = rand::thread_rng().gen_range(0..(total_home+total_away));
+        if key < home.home_wins + away.away_losses {
+            return (1 , 0);
+        }
+        key -= (home.home_wins + away.away_losses);
+        if key < home.home_draws + away.away_draws {
+            return (0,0);
+        }
+        (0, 1)
+        
+    }
 
-
-    // fn run_match(home: &mut Team, away: &mut Team, home_score: i32, away_score: i32 ){
-    //     home.games += 1;
-    //     home.goals_for += home_score;
-    //     home.goals_against += away_score;
-    //     home.goal_difference += home_score - away_score;
-    //     away.games += 1;
-    //     away.goals_for += away_score;
-    //     away.goals_against += home_score;
-    //     away.goal_difference += away_score - home_score;
-    //     let w : f32;
-    //     match home_score.cmp(&away_score) {
-    //         Ordering::Less => {
-    //             home.losses += 1;
-    //             home.home_losses += 1;
-    //             away.wins += 1;
-    //             away.away_wins += 1;
-    //             away.points += 3;
-    //             w = 0.0;
-    //         },
-    //         Ordering::Equal => {
-    //             home.points += 1;
-    //             home.draws += 1;
-    //             home.home_draws +=1;
-    //             away.draws += 1;
-    //             away.away_draws += 1;
-    //             away.points += 1;
-    //             w = 0.5;
-
-    //         },
-    //         Ordering::Greater => {
-    //             home.points += 3;
-    //             home.wins += 1;
-    //             home.home_wins += 1;
-    //             away.losses += 1;
-    //             away.away_losses += 1;
-    //             w = 1.0;
-    //         }
-    //     }
-    //     let dr = home.rating - away.rating;
-    //     let we : f32 = 1.0/(1.0+10f32.powf(-dr/400.0));
-    //     let i = 60f32;
-    //     let delta = i * (w-we);
-    //     home.rating += delta;
-    //     away.rating -= delta;
-    // }
+    
 }
 
 fn main() {
-    let algoritmo = Team::sim_match_rand;
+    let algoritmo = Team::sim_match_ved;
     let n_simulacoes = 100000u32;
 
     let conteudo = fs::read_to_string("C:\\Users\\danie\\Simulador Serie B\\SimuladorPontosCorridos\\TABELA SERIE B.txt").expect("Erro");
@@ -186,8 +155,9 @@ fn main() {
     }
 
 
-    
-    for i in 0..n_simulacoes {
+    print!("▓");
+    for _i in 0..n_simulacoes {
+        
         let mut teams_map  :  HashMap<&str, Team> = HashMap::new();    
         for t in team_names.iter() {
             teams_map.insert(t, Team::create(t.to_string()) );
@@ -270,7 +240,7 @@ fn main() {
     team_names.sort_by_key(|a| relegation_map.get(a).unwrap());
     team_names.sort_by_key(|a| promotion_map.get(a).unwrap()*-1);
     team_names.sort_by_key(|a| title_map.get(a).unwrap()*-1);
-
+    println!("\nTime\tTitulo\tAcesso\tDescenso");
     for team in team_names.iter() {
         let title : f32 = 100.0 * (*title_map.get(team).unwrap() as f32 )/ (n_simulacoes as f32);
         let promotion : f32 = 100.0 * (*promotion_map.get(team).unwrap() as f32) / (n_simulacoes as f32);
