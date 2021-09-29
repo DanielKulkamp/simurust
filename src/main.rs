@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 use std::fs;
 use std::collections::HashMap;
-use rand::Rng;
+use rand::{thread_rng, Rng};
 
 
 #[derive(Debug)]
@@ -103,8 +103,8 @@ impl Team {
     }
 
     fn sim_match_rand(_home: &Team, _away: &Team) -> (i32, i32){ 
-        let home_score : i32 = rand::thread_rng().gen_range(0..4);
-        let away_score : i32 = rand::thread_rng().gen_range(0..4);
+        let home_score : i32 = thread_rng().gen_range(0..4);
+        let away_score : i32 = thread_rng().gen_range(0..4);
         (home_score, away_score)
     }
 
@@ -115,7 +115,7 @@ impl Team {
         if key < home.home_wins + away.away_losses {
             return (1 , 0);
         }
-        key -= (home.home_wins + away.away_losses);
+        key -= home.home_wins + away.away_losses;
         if key < home.home_draws + away.away_draws {
             return (0,0);
         }
@@ -123,11 +123,30 @@ impl Team {
         
     }
 
+    fn sim_match_ELO(home: &Team, away: &Team) -> (i32, i32){
+        let w_e: f32 =  1.0/(1.0+10.0f32.powf((away.rating-home.rating)/400.0));
+        let w_a = 1.0 - w_e;
+        let w_d : f32;
+        if w_e >= 0.5 {
+            w_d = w_a;
+        } else {
+            w_d = w_e;
+        }
+        let res = thread_rng().gen_range(0f32..w_e+w_a+w_d);
+        if res < w_e {
+            return (1, 0);
+        }
+        if res - w_e < w_d {
+            return (0, 0);
+        }
+        (0, 1)
+    }
+
     
 }
 
 fn main() {
-    let algoritmo = Team::sim_match_ved;
+    let algoritmo = Team::sim_match_ELO;
     let n_simulacoes = 100000u32;
 
     let conteudo = fs::read_to_string("C:\\Users\\danie\\Simulador Serie B\\SimuladorPontosCorridos\\TABELA SERIE B.txt").expect("Erro");
@@ -235,6 +254,9 @@ fn main() {
         for i in teams_map.get(team_names[0]).unwrap().points..100 {
             *title_points.entry(i).or_insert(0) += 1;
         }
+        for i in 0..teams_map.get(team_names[16]).unwrap().points {
+            *relegation_points.entry(i).or_insert(0) += 1;
+        }
 
     }
     team_names.sort_by_key(|a| relegation_map.get(a).unwrap());
@@ -247,6 +269,16 @@ fn main() {
         let relegation : f32 = 100.0 * (*relegation_map.get(team).unwrap() as f32) / (n_simulacoes as f32);
         println!("{}\t{:>5.2}\t{:>5.2}\t{:>5.2}",team, title, promotion, relegation);
     }
+
+    println!("\nPor Pontuação:");
+    for i in 16..90 {
+        println!("{}: Titulo: {:>5.2}, \tAcesso: {:>5.2}\tQueda: {:>5.2}", 
+        i, *title_points.get(&i).unwrap() as f32 / n_simulacoes as f32 * 100.0,
+        *promotion_points.get(&i).unwrap()as f32 / n_simulacoes as f32 * 100.0, 
+        *relegation_points.get(&i).unwrap()as f32 / n_simulacoes as f32 * 100.0);
+    }
+
+    
 }
 
 
