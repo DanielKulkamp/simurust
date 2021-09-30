@@ -274,40 +274,10 @@ fn main() {
     for i in 16..90 {
         println!("{}: Titulo: {:>5.2}, \tAcesso: {:>5.2}\tQueda: {:>5.2}", 
         i, *title_points.get(&i).unwrap() as f32 / n_simulacoes as f32 * 100.0,
-        *promotion_points.get(&i).unwrap()as f32 / n_simulacoes as f32 * 100.0, 
-        *relegation_points.get(&i).unwrap()as f32 / n_simulacoes as f32 * 100.0);
+        *promotion_points.get(&i).unwrap() as f32 / n_simulacoes as f32 * 100.0, 
+        *relegation_points.get(&i).unwrap() as f32 / n_simulacoes as f32 * 100.0);
     }
 
     
 }
 
-
-
-
-#[test]
-fn home_wins() {
-    let mut home = crate::Team::create(String::from("VAS"));
-    let mut away = crate::Team::create(String::from("GUA"));
-    //crate::Team::run_match(&mut home, &mut away, 3, 1);
-    assert_eq!(home.goals_for, 3);
-    assert_eq!(home.goals_against, 1);
-    assert_eq!(home.goal_difference, 2);
-    assert_eq!(home.points, 3);
-    assert_eq!(home.wins, 1);
-    assert_eq!(home.home_wins, 1);
-     assert_ne!(home.rating, 1000f32);
-}
-
-#[test]
-fn away_wins() {
-    let mut home = crate::Team::create(String::from("VAS"));
-    let mut away = crate::Team::create(String::from("GUA"));
-    //crate::Team::run_match(&mut home, &mut away, 1, 3);
-    assert_eq!(away.goals_for, 3);
-    assert_eq!(away.goals_against, 1);
-    assert_eq!(away.goal_difference, 2);
-    assert_eq!(away.points, 3);
-    assert_eq!(away.wins, 1);
-    assert_eq!(away.away_wins, 1);
-    assert_ne!(home.rating, 1000f32);
-}
