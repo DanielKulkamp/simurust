@@ -95,7 +95,7 @@ impl Team {
     }
 
     fn calc_delta_rating( home: &Team, away: &Team, w: f32) -> f32 {
-        const IMPORTANCE : f32 = 60.0f32;
+        const IMPORTANCE : f32 = 50.0f32;
         const HOME_BONUS : f32 = 100.0f32;
         let d_r = home.rating + HOME_BONUS - away.rating;
         let w_e = 1.0f32/(1.0+10.0f32.powf(-d_r/400.0f32));
@@ -123,7 +123,7 @@ impl Team {
         
     }
 
-    fn sim_match_ELO(home: &Team, away: &Team) -> (i32, i32){
+    fn sim_match_elo(home: &Team, away: &Team) -> (i32, i32){
         let w_e: f32 =  1.0/(1.0+10.0f32.powf((away.rating-home.rating)/400.0));
         let w_a = 1.0 - w_e;
         let w_d : f32;
@@ -146,17 +146,18 @@ impl Team {
 }
 
 fn main() {
-    let algoritmo = Team::sim_match_ELO;
+    let algoritmo = Team::sim_match_elo;//sim_match_elo;
     let n_simulacoes = 100000u32;
 
-    let conteudo = fs::read_to_string("C:\\Users\\danie\\Simulador Serie B\\SimuladorPontosCorridos\\TABELA SERIE B.txt").expect("Erro");
-    let mut team_names = vec!["CFC", "BOT", "AVA", "CRB", "GOI", "GUA", "CSA", "VAS", "REM", "SAM", "PON", "OPE", "NAU", "CRU", "VIL", "LON",
-        "VIT", "BRU", "CON", "BRA"];
-    
+    let conteudo = fs::read_to_string(".\\TABELA SERIE B.txt").expect("Erro");
+    let mut team_names = vec![ "GUA", "CHA", "CRB", "BAH", "NAU", "PON", "CRI", "TOM",
+        "ITU", "VAS", "OPE", "NOV", "GRE", "BRU", "SCO", "LEC",
+        "CRU", "CSA", "VNO", "SPT"];
+        
     let mut promotion_map : HashMap<&str, i32> = HashMap::new();
     let mut title_map : HashMap<&str, i32> = HashMap::new();
     let mut relegation_map : HashMap<&str, i32> = HashMap::new();
-
+    
     for t in team_names.iter() {
         promotion_map.insert(t, 0);
         title_map.insert(t, 0);
