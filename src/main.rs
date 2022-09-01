@@ -272,8 +272,8 @@ fn main() {
     }
 
     println!("\nPor Pontuação:");
-    for i in 16..90 {
-        println!("{}: Titulo: {:>5.2}, \tAcesso: {:>5.2}\tQueda: {:>5.2}", 
+    for i in 31..90 {
+        println!("{}: Titulo: {:>5.2},  Acesso: {:>5.2}  Queda: {:>5.2}", 
         i, *title_points.get(&i).unwrap() as f32 / n_simulacoes as f32 * 100.0,
         *promotion_points.get(&i).unwrap() as f32 / n_simulacoes as f32 * 100.0, 
         *relegation_points.get(&i).unwrap() as f32 / n_simulacoes as f32 * 100.0);
